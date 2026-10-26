@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>our little forever ♡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { font-family: 'DM Sans', 'Nunito Sans', sans-serif; }
+    button { font: inherit; }
+    .page {
+      --ink: #627c8c;
+      --sub: #89a1ae;
+      --line: rgba(255,255,255,.85);
+      position: relative; isolation: isolate; min-height: 100vh; overflow: hidden;
+      background: linear-gradient(145deg, #fff3be 0%, #fff7dc 23%, #e9f5f4 56%, #bddff5 100%);
+      color: var(--ink); transition: color .5s ease;
+    }
+    .page::before, .page::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: -1; transition: opacity .8s ease; }
+    .page::before { background: radial-gradient(ellipse at 8% 12%, rgba(255,255,255,.60), transparent 37%), radial-gradient(ellipse at 88% 75%, rgba(255,255,255,.35), transparent 42%); }
+    .page::after { opacity: 0; background: linear-gradient(145deg, #111d38 0%, #24334f 38%, #494559 71%, #75654d 100%); }
+    .page.night { --ink: #f4e9d7; --sub: #d2c1aa; --line: rgba(238,219,189,.40); }
+    .page.night::before { opacity: 0; }
+    .page.night::after { opacity: 1; }
+    .content { position: relative; z-index: 2; width: min(1060px, 100%); margin: 0 auto; padding: 100px 32px 0; display: flex; flex-direction: column; align-items: center; }
+    .theme-switch { position: absolute; z-index: 20; top: 25px; right: clamp(18px, 5vw, 65px); border: 1px solid rgba(255,255,255,.8); border-radius: 99px; padding: 11px 17px; display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,.64); color: #658397; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 24px #607d901a; backdrop-filter: blur(16px); transition: background .3s, color .3s, transform .25s; }
+    .theme-switch:hover { transform: translateY(-2px); }
+    .page.night .theme-switch { color: #f3dfb9; background: rgba(31,43,65,.78); border-color: rgba(240,217,176,.38); }
+    button:focus-visible, input:focus-visible { outline: 3px solid #6cb1d6; outline-offset: 3px; }
+    .eyebrow { margin: 0 0 8px; color: var(--sub); font-size: 11px; font-weight: 800; letter-spacing: .29em; text-align: center; }
+    h1 { margin: 0; color: var(--ink); font-size: clamp(40px, 6vw, 67px); letter-spacing: -.072em; line-height: 1.12; text-align: center; }
+    .subtitle { margin: 14px 0 40px; color: var(--sub); text-align: center; font-size: 13px; letter-spacing: .012em; }
+    .gallery { width: min(920px,100%); display: flex; flex-direction: column; align-items: center; }
+    .gallery-stage { position: relative; width: min(800px, calc(100% - 106px)); min-height: 380px; display: flex; justify-content: center; align-items: center; transition: min-height .5s ease; }
+    .photo-frame { position: relative; width: 100%; padding: 13px 13px 39px; background: #fffdfb; border-radius: 4px; box-shadow: 0 19px 55px rgba(66,92,110,.20), 0 3px 12px rgba(76,92,110,.12); transform: rotate(-1deg); transition: width .5s ease, transform .3s ease; }
+    .photo-frame:hover { transform: rotate(0deg); }
+    .photo-window { position: relative; overflow: hidden; width: 100%; aspect-ratio: 1.45; background: #eaf1f1; transition: aspect-ratio .5s ease; }
+    .photo-window img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .3s ease; }
+    .photo-window img.active { opacity: 1; }
+    .photo-note { position: absolute; bottom: 11px; left: 10px; right: 10px; text-align: center; color: #9aa5a9; font-size: 10px; font-weight: 800; letter-spacing: .17em; }
+    .tape { position: absolute; top: -15px; left: 50%; z-index: 5; width: 118px; height: 32px; transform: translateX(-50%) rotate(-3deg); background: repeating-linear-gradient(97deg, rgba(243,238,214,.64) 0 4px,rgba(255,255,255,.55) 4px 9px); border: 1px solid rgba(255,255,255,.68); clip-path: polygon(0 3%,98% 0,100% 97%,2% 100%); filter: drop-shadow(0 2px 2px rgba(50,70,80,.22)); backdrop-filter: blur(3px); pointer-events: none; }
+    .nav { position: absolute; top: 50%; z-index: 6; transform: translateY(-50%); width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.84); border-radius: 50%; background: rgba(255,255,255,.72); color: #748e9c; font-size: 27px; cursor: pointer; backdrop-filter: blur(10px); transition: transform .2s, background .2s; }
+    .nav:hover { transform: translateY(-50%) scale(1.08); background: #fff; }
+    .prev { left: -61px; } .next { right: -61px; }
+    .page.night .nav { background: rgba(31,43,65,.86); color: #f0ddbd; border-color: rgba(230,210,176,.5); }
+    .gallery-meta { width: min(800px, calc(100% - 94px)); display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-top: 19px; color: var(--ink); font-size: 12px; font-weight: 700; }
+    .gallery-count { white-space: nowrap; letter-spacing: .1em; }
+    .gallery-count strong { font-size: 20px; }
+    .thumbs { display: grid; grid-template-columns: repeat(10, minmax(0,1fr)); gap: 9px; width: min(850px,100%); margin-top: 17px; }
+    .thumb { padding: 4px; border: 1px solid rgba(255,255,255,.45); border-radius: 9px; background: rgba(255,255,255,.4); aspect-ratio: 1; cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s; }
+    .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+    .thumb:hover { transform: translateY(-3px); }
+    .thumb.active { border-color: #fff; background: #fff; box-shadow: 0 0 0 2px #93c4dd, 0 5px 15px rgba(74,106,123,.17); }
+    .page.night .thumb { background: rgba(250,233,200,.13); border-color: rgba(239,219,189,.19); }
+    .page.night .thumb.active { box-shadow: 0 0 0 2px #d7b87c, 0 5px 15px rgba(0,0,0,.2); }
+    .since { display: flex; align-items: center; gap: 13px; color: var(--sub); font-weight: 800; font-size: 11px; letter-spacing: .15em; margin: 28px 0 0; }
+    .since::before, .since::after { content: ''; width: 27px; height: 1px; background: currentColor; opacity: .55; }
+    .player { width: min(440px,100%); margin: 28px 0 0; padding: 13px 15px; display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,.59); border: 1px solid var(--line); border-radius: 19px; box-shadow: 0 8px 27px rgba(77,113,133,.08); backdrop-filter: blur(15px); }
+    .play-btn { width: 42px; height: 42px; flex: 0 0 42px; border: 0; border-radius: 50%; background: #9dc6da; color: #fff; font-size: 16px; cursor: pointer; }
+    .track { flex: 1; min-width: 0; }
+    .track-name { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .track-hint { margin-top: 4px; color: var(--sub); font-size: 10px; }
+    .progress { display: block; width: 100%; margin: 8px 0 0; accent-color: #9dc6da; height: 5px; cursor: pointer; }
+    .music-file { border: 1px solid rgba(130,169,185,.33); border-radius: 10px; padding: 8px 10px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .music-file input { display: none; }
+    .page.night .player { background: rgba(38,48,69,.77); box-shadow: 0 9px 30px #0002; }
+    .page.night .play-btn { background: #aa926e; }
+    .page.night .music-file { border-color: rgba(237,218,186,.35); }
+    .wedding-card { width: min(600px,100%); margin: 35px 0 0; padding: 27px 31px 20px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; column-gap: 22px; row-gap: 18px; position: relative; overflow: hidden; border-radius: 24px; border: 1px solid var(--line); background: linear-gradient(125deg,rgba(255,255,255,.76),rgba(255,255,255,.35)); backdrop-filter: blur(19px); box-shadow: 0 15px 43px rgba(91,135,160,.12); }
+    .wedding-card::after { content: ''; position: absolute; top: -96px; right: -66px; width: 240px; height: 240px; border: 1px solid rgba(255,255,255,.4); border-radius: 50%; pointer-events: none; }
+    .wedding-kicker { color: #b69a86; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+    .wedding-title { margin: 11px 0 7px; color: #6f8390; font-size: clamp(22px, 3vw, 29px); font-weight: 800; letter-spacing: -.04em; }
+    .wedding-date { color: #8fa4af; font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+    .wedding-right { text-align: center; min-width: 132px; padding-left: 24px; border-left: 1px solid rgba(134,170,186,.28); }
+    .wedding-count-number { color: #8fb7c8; font-weight: 900; font-size: clamp(36px, 5vw, 50px); letter-spacing: -.06em; line-height: 1.1; }
+    .wedding-count-label { margin-top: 5px; color: #91a5b0; font-size: 10px; letter-spacing: .12em; font-weight: 800; }
+    .wedding-next { grid-column: 1 / -1; border-top: 1px solid rgba(137,170,182,.25); padding-top: 17px; text-align: center; color: #7898a7; font-size: 12px; font-weight: 700; line-height: 1.5; }
+    .page.night .wedding-card { background: linear-gradient(120deg,rgba(43,55,77,.86),rgba(97,83,68,.64)); box-shadow: 0 15px 40px #0003; }
+    .page.night .wedding-kicker, .page.night .wedding-count-number { color: #e8c990; }
+    .page.night .wedding-title { color: #f8e9d0; }
+    .page.night .wedding-date, .page.night .wedding-count-label, .page.night .wedding-next { color: #d8c4a9; }
+    .page.night .wedding-right { border-color: rgba(231,208,172,.3); }
+    .page.night .wedding-next { border-color: rgba(231,208,172,.3); }
+    .bottom { width: 100%; margin-top: 54px; padding: 0 12px 20px; position: relative; z-index: 2; text-align: center; }
+    .bottom-label { color: var(--ink); font-size: 11px; letter-spacing: .36em; font-weight: 900; }
+    .day-number { margin-top: 1px; color: rgba(255,255,255,.76); font-size: clamp(110px, 29vw, 430px); font-weight: 900; letter-spacing: -.085em; line-height: .96; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; user-select: none; text-shadow: 0 3px 24px #ffffff20; }
+    .page.night .day-number { color: rgba(249,232,207,.72); text-shadow: 0 4px 29px rgba(237,200,143,.12); }
+    .snow { position: absolute; inset: -100% 0 0; z-index: 3; pointer-events: none; background-repeat: repeat; opacity: .62; animation: snowfall linear infinite; }
+    .snow.one { background-image: radial-gradient(2px 2px at 20px 30px,#fff 98%,transparent),radial-gradient(3px 3px at 100px 110px,#fff 98%,transparent); background-size: 220px 170px; animation-duration: 19s; }
+    .snow.two { background-image: radial-gradient(1.5px 1.5px at 50px 50px,#fff 98%,transparent),radial-gradient(2px 2px at 145px 130px,#fff 98%,transparent); background-size: 270px 190px; animation-duration: 27s; animation-delay: -8s; }
+    .snow.three { background-image: radial-gradient(3px 3px at 55px 80px,#fff 98%,transparent),radial-gradient(2px 2px at 175px 180px,#fff 98%,transparent); background-size: 300px 230px; animation-duration: 34s; animation-delay: -12s; opacity: .4; }
+    @keyframes snowfall { from { transform: translate3d(0,-10%,0); } to { transform: translate3d(-30px,45%,0); } }
+    .sparkle { position: fixed; z-index: 100; pointer-events: none; width: 8px; height: 8px; animation: sparkle-fade .8s ease-out forwards; }
+    .sparkle::before, .sparkle::after { content: ''; position: absolute; left: 50%; top: 50%; background: var(--spark); border-radius: 99px; transform: translate(-50%,-50%); }
+    .sparkle::before { width: 3px; height: 100%; } .sparkle::after { width: 100%; height: 3px; }
+    @keyframes sparkle-fade { from { opacity: 1; transform: translate(-50%,-50%) scale(.3); } to { opacity: 0; transform: translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(80deg) scale(1.3); } }
+    @media (max-width: 650px) {
+      .content { padding: 98px 16px 0; }
+      .theme-switch { top: 18px; right: 16px; padding: 9px 13px; }
+      .subtitle { margin-bottom: 35px; }
+      .gallery-stage { width: calc(100% - 70px); min-height: 235px; }
+      .photo-frame { padding: 8px 8px 29px; }
+      .photo-note { font-size: 8px; bottom: 8px; }
+      .tape { width: 92px; height: 26px; top: -12px; }
+      .nav { width: 35px; height: 35px; font-size: 22px; }
+      .prev { left: -43px; } .next { right: -43px; }
+      .gallery-meta { width: calc(100% - 42px); margin-top: 16px; }
+      .thumbs { grid-template-columns: repeat(5, minmax(0,1fr)); gap: 7px; margin-top: 15px; }
+      .since { margin-top: 25px; }
+      .player { margin-top: 23px; }
+      .wedding-card { margin-top: 27px; padding: 22px 17px 18px; column-gap: 10px; row-gap: 15px; border-radius: 20px; }
+      .wedding-right { min-width: 99px; padding-left: 12px; }
+      .wedding-count-number { font-size: 36px; }
+      .wedding-count-label { font-size: 8px; }
+      .wedding-date { font-size: 10px; }
+      .wedding-kicker { font-size: 9px; }
+      .wedding-next { font-size: 11px; }
+      .bottom { margin-top: 45px; }
+      .bottom-label { font-size: 10px; }
+      .day-number { font-size: clamp(90px, 33vw, 230px); }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="page" id="couplePage">
+    <button class="theme-switch" id="themeSwitch" type="button" aria-pressed="false">
+      <span id="themeIcon" aria-hidden="true">☾</span>
+      <span id="themeText">night mode</span>
+    </button>
+    <div class="snow one" aria-hidden="true"></div>
+    <div class="snow two" aria-hidden="true"></div>
+    <div class="snow three" aria-hidden="true"></div>
+
+    <main class="content">
+      <p class="eyebrow">YOU &amp; ME, EVERY DAY</p>
+      <h1>our little forever.</h1>
+      <p class="subtitle">함께이기에, 가장 소중한 우리의 날들.</p>
+
+      <section class="gallery" aria-label="우리의 사진 앨범">
+        <div class="gallery-stage" id="galleryStage">
+          <div class="photo-frame" id="photoFrame">
+            <div class="tape" aria-hidden="true"></div>
+            <div class="photo-window" id="photoWindow"></div>
+            <div class="photo-note">MEMORIES WITH YOU ♡</div>
+          </div>
+          <button class="nav prev" id="prevPhoto" type="button" aria-label="이전 사진">‹</button>
+          <button class="nav next" id="nextPhoto" type="button" aria-label="다음 사진">›</button>
+        </div>
+        <div class="gallery-meta">
+          <span id="photoCaption">our first memory</span>
+          <span class="gallery-count"><strong id="photoIndex">01</strong> / 10</span>
+        </div>
+        <div class="thumbs" id="thumbs" aria-label="사진 10장 선택"></div>
+      </section>
+
+      <div class="since" id="startDateText">SINCE 2026.09.21</div>
+
+      <section class="player" aria-label="음악 플레이어">
+        <button class="play-btn" type="button" id="playBtn" aria-label="음악 재생">▶</button>
+        <div class="track">
+          <div class="track-name" id="trackName">Favorite winter ♫</div>
+          <div class="track-hint" id="trackHint">music.mp3 파일을 넣거나 음악을 선택해 주세요</div>
+          <input class="progress" id="musicProgress" type="range" min="0" max="100" value="0" aria-label="음악 재생 위치">
+        </div>
+        <label class="music-file">음악 선택<input id="musicUpload" type="file" accept="audio/*"></label>
+        <audio id="audio" preload="auto" src="music.mp3" loop autoplay></audio>
+      </section>
+
+      <section class="wedding-card" aria-label="결혼기념일">
+        <div>
+          <div class="wedding-kicker">✦ OUR WEDDING DAY</div>
+          <div class="wedding-title">Eternal vow ♡</div>
+          <div class="wedding-date" id="weddingDate">2026. 10. 12</div>
+        </div>
+        <div class="wedding-right">
+          <div class="wedding-count-number" id="weddingDays">1</div>
+          <div class="wedding-count-label" id="weddingDaysLabel">DAYS MARRIED</div>
+        </div>
+        <div class="wedding-next" id="weddingNext">✦ 다음 결혼기념일까지 계산 중 ♡</div>
+      </section>
+    </main>
+
+    <section class="bottom" aria-label="연애 시작일부터 함께한 일수">
+      <div class="bottom-label">DAYS TOGETHER</div>
+      <div class="day-number" id="daysTogether">1</div>
+    </section>
+  </div>
+
+  <script>
+    // 수정할 날짜 (연애 시작일 / 결혼일)
+    const START_YEAR = 2026;
+    const START_MONTH = 9;
+    const START_DAY = 21;
+    const WEDDING_YEAR = 2026;
+    const WEDDING_MONTH = 10;
+    const WEDDING_DAY = 12;
+
+    // 사진 경로와 설명. HTML 옆에 photos 폴더를 만들어 사용합니다.
+    const galleryPhotos = [
+      { src: 'photos/1.png', caption: '©kiwigogocm' },
+      { src: 'photos/2.png', caption: '©SAID' },
+      { src: 'photos/3.png', caption: '©뀨멍이' },
+      { src: 'photos/4.png', caption: '©수퍼마켓' },
+      { src: 'photos/5.png', caption: '©넨샤' },
+      { src: 'photos/6.jpg', caption: '©84세 만두 할머니' },
+      { src: 'photos/7.png', caption: '©와우' },
+      { src: 'photos/8.png', caption: '©단속' },
+      { src: 'photos/9.png', caption: '©가지' },
+      { src: 'photos/10.png', caption: '©라잎' }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const pad = (n) => String(n).padStart(2, '0');
+    const dayUTC = (y, m, d) => Date.UTC(y, m - 1, d);
+    const daysBetween = (a, b) => Math.round((a - b) / 86400000);
+
+    function updateDates() {
+      const now = new Date();
+      const todayUTC = dayUTC(now.getFullYear(), now.getMonth() + 1, now.getDate());
+      const startUTC = dayUTC(START_YEAR, START_MONTH, START_DAY);
+      const weddingUTC = dayUTC(WEDDING_YEAR, WEDDING_MONTH, WEDDING_DAY);
+      const since = daysBetween(todayUTC, startUTC);
+      const married = daysBetween(todayUTC, weddingUTC);
+
+      $('daysTogether').textContent = (since >= 0 ? since + 1 : since).toLocaleString('en-US');
+      $('startDateText').textContent = `SINCE ${START_YEAR}.${pad(START_MONTH)}.${pad(START_DAY)}`;
+      $('weddingDate').textContent = `${WEDDING_YEAR}. ${pad(WEDDING_MONTH)}. ${pad(WEDDING_DAY)}`;
+      $('weddingDays').textContent = (married >= 0 ? married + 1 : Math.abs(married)).toLocaleString('en-US');
+      $('weddingDaysLabel').textContent = married >= 0 ? 'DAYS MARRIED' : 'DAYS UNTIL';
+
+      if (married < 0) {
+        $('weddingNext').textContent = `✦ 결혼식까지 D-${Math.abs(married)} ♡`;
+        return;
+      }
+      const anniversaryUTC = (year) => {
+        const lastDay = new Date(Date.UTC(year, WEDDING_MONTH, 0)).getUTCDate();
+        return dayUTC(year, WEDDING_MONTH, Math.min(WEDDING_DAY, lastDay));
+      };
+      let nextYear = now.getFullYear();
+      if (anniversaryUTC(nextYear) <= todayUTC) nextYear += 1;
+      const currentYearNumber = now.getFullYear() - WEDDING_YEAR;
+      $('weddingNext').textContent = anniversaryUTC(now.getFullYear()) === todayUTC
+        ? `✦ 오늘은 우리의 ${currentYearNumber}주년 결혼기념일이에요! ♡`
+        : `✦ ${nextYear - WEDDING_YEAR}주년 결혼기념일까지 D-${daysBetween(anniversaryUTC(nextYear), todayUTC)} ♡`;
+    }
+    updateDates();
+    setInterval(updateDates, 60000);
+
+    const photoWindow = $('photoWindow');
+    const photoFrame = $('photoFrame');
+    const thumbs = $('thumbs');
+    let currentPhoto = 0;
+    const images = [];
+
+    function fitPhoto(img) {
+      if (!img || !img.naturalWidth) return;
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const available = $('galleryStage').clientWidth;
+      const maxHeight = window.innerWidth < 650 ? 420 : 530;
+      const desired = Math.min(available, Math.max(Math.min(available, 180), maxHeight * ratio));
+      photoFrame.style.width = `${desired}px`;
+      photoWindow.style.aspectRatio = String(ratio);
+      $('galleryStage').style.minHeight = `${Math.min(maxHeight, desired / ratio) + 64}px`;
+    }
+
+    galleryPhotos.forEach((photo, index) => {
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.alt = `추억 사진 ${index + 1}`;
+      img.loading = index === 0 ? 'eager' : 'lazy';
+      img.classList.toggle('active', index === 0);
+      img.addEventListener('load', () => { if (currentPhoto === index) fitPhoto(img); });
+      photoWindow.appendChild(img);
+      images.push(img);
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `thumb${index === 0 ? ' active' : ''}`;
+      button.setAttribute('aria-label', `${index + 1}번 사진 보기`);
+      const thumbImg = document.createElement('img');
+      thumbImg.src = photo.src;
+      thumbImg.alt = '';
+      button.appendChild(thumbImg);
+      button.addEventListener('click', () => showPhoto(index));
+      thumbs.appendChild(button);
+    });
+
+    function showPhoto(index) {
+      currentPhoto = (index + galleryPhotos.length) % galleryPhotos.length;
+      images.forEach((img, i) => img.classList.toggle('active', i === currentPhoto));
+      [...thumbs.children].forEach((button, i) => {
+        button.classList.toggle('active', i === currentPhoto);
+        button.setAttribute('aria-pressed', String(i === currentPhoto));
+      });
+      $('photoCaption').textContent = galleryPhotos[currentPhoto].caption;
+      $('photoIndex').textContent = pad(currentPhoto + 1);
+      if (images[currentPhoto].complete) fitPhoto(images[currentPhoto]);
+    }
+    $('prevPhoto').addEventListener('click', () => showPhoto(currentPhoto - 1));
+    $('nextPhoto').addEventListener('click', () => showPhoto(currentPhoto + 1));
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (e.key === 'ArrowLeft') showPhoto(currentPhoto - 1);
+      if (e.key === 'ArrowRight') showPhoto(currentPhoto + 1);
+    });
+    window.addEventListener('resize', () => fitPhoto(images[currentPhoto]));
+    showPhoto(0);
+
+    function setNightMode(enabled) {
+      $('couplePage').classList.toggle('night', enabled);
+      $('themeSwitch').setAttribute('aria-pressed', String(enabled));
+      $('themeSwitch').setAttribute('aria-label', enabled ? '낮 테마로 전환' : '밤 테마로 전환');
+      $('themeIcon').textContent = enabled ? '☀' : '☾';
+      $('themeText').textContent = enabled ? 'day mode' : 'night mode';
+      try { localStorage.setItem('couple-theme', enabled ? 'night' : 'day'); } catch (_) {}
+    }
+    let savedTheme = 'day';
+    try { savedTheme = localStorage.getItem('couple-theme') || 'day'; } catch (_) {}
+    setNightMode(savedTheme === 'night');
+    $('themeSwitch').addEventListener('click', () => setNightMode(!$('couplePage').classList.contains('night')));
+
+    const audio = $('audio');
+    const musicProgress = $('musicProgress');
+    let selectedMusicUrl = null;
+    let pendingAutoplay = false;
+    const unlockEvents = ['pointerdown', 'keydown'];
+    function removeUnlockListeners() {
+      unlockEvents.forEach(type => document.removeEventListener(type, unlockAudio));
+    }
+    async function unlockAudio(event) {
+      if (!pendingAutoplay || !audio.paused) return;
+      // 재생 버튼은 기존 클릭 핸들러에 맡겨 중복 토글을 방지합니다.
+      if (event.target.closest && event.target.closest('#playBtn')) return;
+      try {
+        await audio.play();
+        pendingAutoplay = false;
+        removeUnlockListeners();
+        $('trackHint').textContent = '우리만의 플레이리스트 ♡';
+      } catch (_) { /* 음악이 없을 수도 있습니다. */ }
+    }
+    async function tryAutoplay() {
+      try {
+        await audio.play();
+        pendingAutoplay = false;
+        removeUnlockListeners();
+        $('trackHint').textContent = '우리만의 플레이리스트 ♡';
+      } catch (_) {
+        pendingAutoplay = true;
+        $('trackHint').textContent = '화면을 클릭하면 음악이 시작돼요 ♫';
+        unlockEvents.forEach(type => document.addEventListener(type, unlockAudio));
+      }
+    }
+    // 브라우저가 소리 있는 자동 재생을 차단할 수 있습니다.
+    tryAutoplay();
+    $('playBtn').addEventListener('click', async () => {
+      if (audio.paused) {
+        try { await audio.play(); pendingAutoplay = false; removeUnlockListeners(); } catch (_) { $('trackHint').textContent = 'music.mp3 파일을 확인해 주세요'; }
+      } else { pendingAutoplay = false; removeUnlockListeners(); audio.pause(); }
+    });
+    audio.addEventListener('play', () => { $('playBtn').textContent = '❚❚'; $('playBtn').setAttribute('aria-label', '일시정지'); });
+    audio.addEventListener('pause', () => { $('playBtn').textContent = '▶'; $('playBtn').setAttribute('aria-label', '음악 재생'); });
+    audio.addEventListener('timeupdate', () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) musicProgress.value = audio.currentTime / audio.duration * 100;
+    });
+    musicProgress.addEventListener('input', () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = audio.duration * Number(musicProgress.value) / 100;
+    });
+    $('musicUpload').addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      audio.pause();
+      if (selectedMusicUrl) URL.revokeObjectURL(selectedMusicUrl);
+      selectedMusicUrl = URL.createObjectURL(file);
+      audio.src = selectedMusicUrl;
+      audio.load();
+      $('trackName').textContent = file.name;
+      $('trackHint').textContent = '우리만의 플레이리스트 ♡';
+      musicProgress.value = 0;
+      tryAutoplay();
+    });
+    audio.addEventListener('error', () => { pendingAutoplay = false; removeUnlockListeners(); $('trackHint').textContent = 'music.mp3 파일이 없어요. 파일 위치를 확인해 주세요'; });
+
+    if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let lastSpark = 0;
+      document.addEventListener('pointermove', (event) => {
+        if (event.pointerType === 'touch' || performance.now() - lastSpark < 27) return;
+        lastSpark = performance.now();
+        for (let i = 0; i < 2; i++) {
+          const spark = document.createElement('span');
+          spark.className = 'sparkle';
+          spark.style.left = `${event.clientX + (Math.random() - .5) * 16}px`;
+          spark.style.top = `${event.clientY + (Math.random() - .5) * 16}px`;
+          spark.style.width = spark.style.height = `${5 + Math.random() * 8}px`;
+          spark.style.setProperty('--spark', i === 0 ? '#f6d26a' : '#90cdea');
+          spark.style.setProperty('--dx', `${(Math.random() - .5) * 45}px`);
+          spark.style.setProperty('--dy', `${12 + Math.random() * 38}px`);
+          document.body.appendChild(spark);
+          spark.addEventListener('animationend', () => spark.remove(), { once: true });
+        }
+      }, { passive: true });
+    }
+  </script>
+</body>
+</html>
